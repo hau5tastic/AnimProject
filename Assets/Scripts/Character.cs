@@ -7,10 +7,24 @@ using System.Collections;
 [RequireComponent(typeof(CharacterController))]
 public class Character : MonoBehaviour {
 
-    public float gravity = 20.0f;
+    public enum State
+    {
+        IDLE,
+        WALKING,
+        RUNNING,
+        STRAFING,
+        ATTACKING,
+        COUNTERING
+    };
+    State currentState;
+    bool moving = false;
+    bool attacking = false;
+    bool movingCamera = false;
+    AnimatorStateInfo currentBaseState;
 
+    public float gravity = 20.0f;
     public int health = 100;
-    public float moveSpeed = 5.0f;
+    float moveSpeed = 2.5f;
 
     int heavyAttack = 40;
     int lightAttack = 15;
@@ -28,8 +42,8 @@ public class Character : MonoBehaviour {
         m_Rigidbody = GetComponent<Rigidbody>();
         m_Capsule = GetComponent<CapsuleCollider>();
         m_CharacterController = GetComponent<CharacterController>();
-
         m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        currentState = State.IDLE;
     }
 
     void Update()
@@ -37,12 +51,107 @@ public class Character : MonoBehaviour {
         if (m_CharacterController.isGrounded)
         {
             moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-            moveDirection = transform.TransformDirection(moveDirection) * moveSpeed;
-        }
+            moving = true;
+            updateStates();
+            moveDirection = transform.TransformDirection(moveDirection) * moveSpeed;        
+        }     
+        else
+        {
+            updateStates();
+        }     
 
         moveDirection.y -= gravity * Time.deltaTime;
-
         m_CharacterController.Move(moveDirection * Time.deltaTime);
     }
- 
+
+    void updateStates()
+    {
+        if(!attacking)
+        {
+            if (Input.GetButtonDown("Fire1"))
+            {
+                m_Animator.SetTrigger("attack");
+                attacking = true;
+            }
+            else if (Input.GetButtonDown("Action1"))
+            {
+                m_Animator.SetTrigger("strike");
+                attacking = true;
+            }
+            else if (Input.GetButtonDown("Action2"))
+            {
+                m_Animator.SetTrigger("shieldBash");
+                attacking = true;
+            }
+            else if (Input.GetButtonDown("Action3"))
+            {
+                m_Animator.SetTrigger("rollingShieldBash");
+                attacking = true;
+            }
+            else if (Input.GetButtonDown("Action4"))
+            {
+                m_Animator.SetTrigger("counter");
+                attacking = true;
+            }
+            else if (Input.GetButtonDown("Action5"))
+            {
+                m_Animator.SetTrigger("parry");
+                attacking = true;
+            }
+            else if (Input.GetButtonDown("Action6"))
+            {
+                m_Animator.SetTrigger("taunt");
+                attacking = true;
+            }    
+        }
+
+        if (moving && !attacking)
+        {
+            if(moveDirection.z > 0.5f && Input.GetButton("Fire3"))
+            {
+                currentState = State.RUNNING;
+                moveSpeed = 5.0f;
+            }
+            else if(moveDirection.z > 0.1f)
+            {
+                currentState = State.WALKING;
+                moveSpeed = 2.5f;
+            }
+            else if(moveDirection.x != 0)
+            {
+                currentState = State.STRAFING;
+            }          
+        }
+        else
+        {
+            currentState = State.IDLE;
+        }
+
+        switch (currentState)
+        {
+            case State.ATTACKING:
+                break;
+            case State.WALKING:
+                m_Animator.SetFloat("moveSpeed", 0.5f);
+                break;
+            case State.RUNNING:
+                m_Animator.SetFloat("moveSpeed", moveDirection.z);
+                break;
+            case State.STRAFING:
+                m_Animator.SetFloat("strafe", -moveDirection.x);
+                break;
+            case State.IDLE:
+            default:
+                m_Animator.SetFloat("moveSpeed", 0.0f);
+                break;
+        }
+
+        currentBaseState = m_Animator.GetCurrentAnimatorStateInfo(0);
+    }
+    // animation callbacks 
+    void endAttack()
+    {
+        attacking = false;
+        moveDirection = Vector3.zero;
+    }
 }

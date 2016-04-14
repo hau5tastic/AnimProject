@@ -34,6 +34,6 @@ public class Powerup : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.Rotate(rotationSpeed);
-        Debug.Log("rotating");
+        //Debug.Log("rotating");
     }
 }
