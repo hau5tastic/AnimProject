@@ -18,7 +18,7 @@ public class Character : MonoBehaviour {
     };
     State currentState;
     bool moving = false;
-    bool attacking = false;
+    public bool attacking = false;
     bool movingCamera = false;
     AnimatorStateInfo currentBaseState;
 
