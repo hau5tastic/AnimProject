@@ -102,7 +102,7 @@ public class Character : MonoBehaviour {
                 m_Animator.SetTrigger("counter");
                 attacking = true;
             }
-            else if (Input.GetButtonDown("Fire2"))
+            else if (Input.GetButtonDown(InputPrefix + "Fire2"))
             {
                 m_Animator.SetTrigger("parry");
                 attacking = true;
@@ -153,6 +153,7 @@ public class Character : MonoBehaviour {
             case State.IDLE:
             default:
                 m_Animator.SetFloat("moveSpeed", 0.0f);
+                m_Animator.SetFloat("strafe", 0.0f);
                 break;
         }
 
@@ -168,5 +169,6 @@ public class Character : MonoBehaviour {
     void endStrafe()
     {
         currentState = State.IDLE;
+        Debug.Log("Strafe Ended");
     }
 }
