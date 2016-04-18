@@ -24,6 +24,7 @@ public class Character : MonoBehaviour {
 
     public float gravity = 20.0f;
     public int health = 100;
+    public string InputPrefix = "A";
     float moveSpeed = 2.5f;
 
     int heavyAttack = 40;
@@ -50,7 +51,7 @@ public class Character : MonoBehaviour {
     {
         if (m_CharacterController.isGrounded)
         {
-            moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            moveDirection = new Vector3(Input.GetAxis(InputPrefix + "Horizontal"), 0, Input.GetAxis(InputPrefix + "Vertical"));
             moving = true;
             updateStates();
             moveDirection = transform.TransformDirection(moveDirection) * moveSpeed;        
@@ -68,37 +69,37 @@ public class Character : MonoBehaviour {
     {
         if(!attacking)
         {
-            if (Input.GetButtonDown("Fire1"))
+            if (Input.GetButtonDown(InputPrefix + "Fire1"))
             {
                 m_Animator.SetTrigger("attack");
                 attacking = true;
             }
-            else if (Input.GetButtonDown("Action1"))
+            else if (Input.GetButtonDown(InputPrefix + "Action1"))
             {
                 m_Animator.SetTrigger("strike");
                 attacking = true;
             }
-            else if (Input.GetButtonDown("Action2"))
+            else if (Input.GetButtonDown(InputPrefix + "Action2"))
             {
                 m_Animator.SetTrigger("shieldBash");
                 attacking = true;
             }
-            else if (Input.GetButtonDown("Action3"))
+            else if (Input.GetButtonDown(InputPrefix + "Action3"))
             {
                 m_Animator.SetTrigger("rollingShieldBash");
                 attacking = true;
             }
-            else if (Input.GetButtonDown("Action4"))
+            else if (Input.GetButtonDown(InputPrefix + "Action4"))
             {
                 m_Animator.SetTrigger("counter");
                 attacking = true;
             }
-            else if (Input.GetButtonDown("Action5"))
+            else if (Input.GetButtonDown(InputPrefix + "Action5"))
             {
                 m_Animator.SetTrigger("parry");
                 attacking = true;
             }
-            else if (Input.GetButtonDown("Action6"))
+            else if (Input.GetButtonDown(InputPrefix + "Action6"))
             {
                 m_Animator.SetTrigger("taunt");
                 attacking = true;
@@ -107,7 +108,7 @@ public class Character : MonoBehaviour {
 
         if (moving && !attacking)
         {
-            if(moveDirection.z > 0.5f && Input.GetButton("Fire3"))
+            if (moveDirection.z > 0.5f && Input.GetButton(InputPrefix + "Fire3"))
             {
                 currentState = State.RUNNING;
                 moveSpeed = 5.0f;
