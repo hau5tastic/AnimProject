@@ -28,6 +28,6 @@ public class Camera : MonoBehaviour {
                 max = dist;
         }
         avg /= iter;
-        transform.position = new Vector3(avg.x, max * r3, avg.z);
+        transform.position = new Vector3(avg.x, max * r3 + 5.0f, avg.z);
 	}
 }
