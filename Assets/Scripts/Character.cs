@@ -52,7 +52,7 @@ public class Character : MonoBehaviour {
         if (m_CharacterController.isGrounded)
         {
             moveDirection = Vector3.zero;
-            moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            moveDirection = new Vector3(Input.GetAxis(InputPrefix + "Horizontal"), 0, Input.GetAxis(InputPrefix + "Vertical"));
             if (moveDirection.x != 0 || moveDirection.z != 0)
             {
                 moving = true;
