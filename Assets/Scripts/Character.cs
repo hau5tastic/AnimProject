@@ -49,28 +49,36 @@ public class Character : MonoBehaviour {
 
     void Update()
     {
-        if (m_CharacterController.isGrounded)
+        PauseManager pm = FindObjectOfType(typeof(PauseManager)) as PauseManager;
+        if (Input.GetKeyDown(KeyCode.P))
+            pm.Pause();
+        else if (Input.GetKeyDown(KeyCode.Escape))
+            pm.Resume();
+        if(!pm.IsPaused)
         {
-            moveDirection = Vector3.zero;
-            moveDirection = new Vector3(Input.GetAxis(InputPrefix + "Horizontal"), 0, Input.GetAxis(InputPrefix + "Vertical"));
-            if (moveDirection.x != 0 || moveDirection.z != 0)
+            if (m_CharacterController.isGrounded)
             {
-                moving = true;
+                moveDirection = Vector3.zero;
+                moveDirection = new Vector3(Input.GetAxis(InputPrefix + "Horizontal"), 0, Input.GetAxis(InputPrefix + "Vertical"));
+                if (moveDirection.x != 0 || moveDirection.z != 0)
+                {
+                    moving = true;
+                }
+                else
+                {
+                    moving = false;
+                }
+                updateStates();
+                moveDirection = transform.TransformDirection(moveDirection) * moveSpeed;
             }
             else
             {
-                moving = false;
+                updateStates();
             }
-            updateStates();
-            moveDirection = transform.TransformDirection(moveDirection) * moveSpeed;        
-        }     
-        else
-        {
-            updateStates();
-        }     
 
-        moveDirection.y -= gravity * Time.deltaTime;
-        m_CharacterController.Move(moveDirection * Time.deltaTime);
+            moveDirection.y -= gravity * Time.deltaTime;
+            m_CharacterController.Move(moveDirection * Time.deltaTime);
+        }
     }
 
     void updateStates()
